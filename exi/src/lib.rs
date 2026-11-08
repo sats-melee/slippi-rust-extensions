@@ -58,7 +58,11 @@ impl SlippiEXIDevice {
         // Playback has no need to deal with this.
         // (We could maybe silo more?)
         #[cfg(not(feature = "playback"))]
-        user_manager.watch_for_login();
+        if std::env::var_os("SATS_ARENA_NETPLAY_FILE").is_none()
+            && std::env::var("SATS_ARENA_NETPLAY_ROOMS").as_deref() != Ok("1")
+        {
+            user_manager.watch_for_login();
+        }
 
         let matchmaking = MatchmakingClient::new(user_manager.clone(), config.scm.slippi_semver.clone());
 
